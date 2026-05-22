@@ -6,7 +6,24 @@ import PureMP3Core
 @Observable
 @MainActor
 final class AppViewModel {
+    enum DisplayMode: String, CaseIterable, Identifiable {
+        case liquidGlass
+        case oled
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .liquidGlass:
+                "Glass"
+            case .oled:
+                "OLED"
+            }
+        }
+    }
+
     var selectedPreset: AudioQualityPreset = .vbrBalanced
+    var displayMode: DisplayMode = .oled
     var jobs: [ConversionJob] = []
     var outputDirectory: URL = FileManager.default.urls(for: .musicDirectory, in: .userDomainMask).first
         ?? FileManager.default.homeDirectoryForCurrentUser

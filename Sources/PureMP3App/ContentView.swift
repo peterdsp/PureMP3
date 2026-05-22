@@ -8,7 +8,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            LiquidGlassBackground()
+            LiquidGlassBackground(mode: viewModel.displayMode)
 
             VStack(spacing: 0) {
                 header
@@ -21,9 +21,10 @@ struct ContentView: View {
 
                 commandBar
             }
-            .liquidGlass(RoundedRectangle(cornerRadius: 28, style: .continuous), tint: Color.accentColor, strokeOpacity: 0.34)
+            .liquidGlass(RoundedRectangle(cornerRadius: 28, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.34)
             .padding(16)
         }
+        .preferredColorScheme(.dark)
         .frame(width: 940, height: 620)
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers)
@@ -52,19 +53,29 @@ struct ContentView: View {
 
             Spacer()
 
+            Picker("Display mode", selection: $viewModel.displayMode) {
+                ForEach(AppViewModel.DisplayMode.allCases) { mode in
+                    Text(mode.title)
+                        .tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 132)
+            .liquidGlass(Capsule(), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.18, shadowOpacity: 0.08, interactive: true)
+
             Button {
                 viewModel.chooseFiles()
             } label: {
                 Label("Add files", systemImage: "plus")
             }
-            .buttonStyle(LiquidGlassButtonStyle())
+            .buttonStyle(LiquidGlassButtonStyle(mode: viewModel.displayMode))
 
             Button {
                 viewModel.convertAll()
             } label: {
                 Label("Convert", systemImage: "waveform")
             }
-            .buttonStyle(LiquidGlassButtonStyle(prominent: true))
+            .buttonStyle(LiquidGlassButtonStyle(prominent: true, mode: viewModel.displayMode))
             .disabled(!viewModel.hasJobs || viewModel.isConverting)
             .keyboardShortcut(.return, modifiers: .command)
         }
@@ -82,7 +93,8 @@ struct ContentView: View {
                 ForEach(AudioQualityPreset.allCases) { preset in
                     PresetRow(
                         preset: preset,
-                        isSelected: viewModel.selectedPreset == preset
+                        isSelected: viewModel.selectedPreset == preset,
+                        mode: viewModel.displayMode
                     ) {
                         viewModel.selectedPreset = preset
                     }
@@ -108,7 +120,7 @@ struct ContentView: View {
                     .font(.callout.weight(.medium))
                     .padding(.horizontal, 12)
                     .frame(height: 42)
-                    .liquidGlass(RoundedRectangle(cornerRadius: 12, style: .continuous), tint: Color.accentColor, strokeOpacity: 0.22, shadowOpacity: 0.10, interactive: true)
+                    .liquidGlass(RoundedRectangle(cornerRadius: 12, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.22, shadowOpacity: 0.10, interactive: true)
                 }
                 .buttonStyle(.plain)
             }
@@ -128,7 +140,7 @@ struct ContentView: View {
         .padding(.horizontal, 18)
         .padding(.vertical, 18)
         .frame(width: 278)
-        .liquidGlass(RoundedRectangle(cornerRadius: 22, style: .continuous), tint: Color(red: 0.38, green: 0.70, blue: 1.0), strokeOpacity: 0.26, shadowOpacity: 0.14)
+        .liquidGlass(RoundedRectangle(cornerRadius: 22, style: .continuous), tint: Color(red: 0.38, green: 0.70, blue: 1.0), mode: viewModel.displayMode, strokeOpacity: 0.26, shadowOpacity: 0.14)
     }
 
     private var mainContent: some View {
@@ -138,7 +150,7 @@ struct ContentView: View {
             } else {
                 List {
                     ForEach(viewModel.jobs) { job in
-                        JobRow(job: job) {
+                        JobRow(job: job, mode: viewModel.displayMode) {
                             viewModel.revealOutput(for: job)
                         }
                     }
@@ -149,7 +161,7 @@ struct ContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .liquidGlass(RoundedRectangle(cornerRadius: 22, style: .continuous), tint: Color(red: 0.00, green: 0.76, blue: 0.64), strokeOpacity: 0.24, shadowOpacity: 0.16)
+        .liquidGlass(RoundedRectangle(cornerRadius: 22, style: .continuous), tint: Color(red: 0.00, green: 0.76, blue: 0.64), mode: viewModel.displayMode, strokeOpacity: 0.24, shadowOpacity: 0.16)
     }
 
     private var emptyState: some View {
@@ -176,19 +188,19 @@ struct ContentView: View {
                     Label("Choose files", systemImage: "plus")
                 }
                 .controlSize(.large)
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(LiquidGlassButtonStyle(prominent: true, mode: viewModel.displayMode))
             }
             .frame(width: 430, height: 260)
-            .liquidGlass(RoundedRectangle(cornerRadius: 24, style: .continuous), tint: Color.accentColor, strokeOpacity: 0.36, shadowOpacity: 0.24, interactive: true)
+            .liquidGlass(RoundedRectangle(cornerRadius: 24, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.36, shadowOpacity: 0.24, interactive: true)
             .overlay {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .strokeBorder(Color.white.opacity(0.14), style: StrokeStyle(lineWidth: 1, dash: [6, 6]))
             }
 
             HStack(spacing: 10) {
-                InfoPill(icon: "waveform", title: "VBR first", value: "smaller, still excellent")
-                InfoPill(icon: "checkmark.seal", title: "No myths", value: "honest bitrate rules")
-                InfoPill(icon: "terminal", title: "Visible", value: "shows the command")
+                InfoPill(icon: "waveform", title: "VBR first", value: "smaller, still excellent", mode: viewModel.displayMode)
+                InfoPill(icon: "checkmark.seal", title: "No myths", value: "honest bitrate rules", mode: viewModel.displayMode)
+                InfoPill(icon: "terminal", title: "Visible", value: "shows the command", mode: viewModel.displayMode)
             }
             .frame(width: 600)
 
@@ -223,7 +235,7 @@ struct ContentView: View {
         }
         .padding(.horizontal, 20)
         .frame(height: 46)
-        .liquidGlass(Capsule(), tint: Color.accentColor, strokeOpacity: 0.20, shadowOpacity: 0.12)
+        .liquidGlass(Capsule(), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.20, shadowOpacity: 0.12)
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
     }
@@ -274,6 +286,7 @@ private struct SectionTitle: View {
 private struct PresetRow: View {
     let preset: AudioQualityPreset
     let isSelected: Bool
+    let mode: AppViewModel.DisplayMode
     let action: () -> Void
 
     var body: some View {
@@ -306,6 +319,7 @@ private struct PresetRow: View {
         .liquidGlass(
             RoundedRectangle(cornerRadius: 12, style: .continuous),
             tint: isSelected ? Color.accentColor : Color.white,
+            mode: mode,
             strokeOpacity: isSelected ? 0.34 : 0.12,
             shadowOpacity: isSelected ? 0.12 : 0.04,
             interactive: true
@@ -318,6 +332,7 @@ private struct InfoPill: View {
     let icon: String
     let title: String
     let value: String
+    let mode: AppViewModel.DisplayMode
 
     var body: some View {
         HStack(spacing: 9) {
@@ -339,12 +354,13 @@ private struct InfoPill: View {
         }
         .padding(.horizontal, 10)
         .frame(height: 48)
-        .liquidGlass(RoundedRectangle(cornerRadius: 14, style: .continuous), tint: Color.accentColor, strokeOpacity: 0.18, shadowOpacity: 0.08)
+        .liquidGlass(RoundedRectangle(cornerRadius: 14, style: .continuous), tint: Color.accentColor, mode: mode, strokeOpacity: 0.18, shadowOpacity: 0.08)
     }
 }
 
 private struct JobRow: View {
     let job: ConversionJob
+    let mode: AppViewModel.DisplayMode
     let revealAction: () -> Void
 
     var body: some View {
@@ -378,7 +394,7 @@ private struct JobRow: View {
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 12)
-        .liquidGlass(RoundedRectangle(cornerRadius: 16, style: .continuous), tint: Color.white, strokeOpacity: 0.18, shadowOpacity: 0.08, interactive: true)
+        .liquidGlass(RoundedRectangle(cornerRadius: 16, style: .continuous), tint: Color.white, mode: mode, strokeOpacity: 0.18, shadowOpacity: 0.08, interactive: true)
     }
 
     private var detailText: String {

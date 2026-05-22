@@ -34,6 +34,7 @@ The Liquid Glass direction is inspired by Lucas Romero's CSS/SVG experiment, [li
 - Drop audio or video files into a focused conversion queue
 - Pick real LAME presets without digging through FFmpeg docs
 - Use VBR Best, VBR Balanced, 320 kbps, 256 kbps, or 192 kbps
+- Switch between Liquid Glass and OLED display modes
 - See the exact command PureMP3 will run
 - Get warned before re-encoding an already lossy MP3
 - Keep the conversion policy in a tested Swift core module
@@ -73,6 +74,7 @@ PureMP3 is designed to stay out of the way:
 - warnings are attached to the file they affect
 - the FFmpeg command is visible instead of hidden behind a black box
 - glass is used for hierarchy, depth, and interaction rather than decoration alone
+- OLED mode uses a near-black surface system with lower glow and sharper contrast
 
 ## Quality Presets
 
