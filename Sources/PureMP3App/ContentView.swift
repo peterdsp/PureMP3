@@ -21,19 +21,20 @@ struct ContentView: View {
 
                 commandBar
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .liquidGlass(RoundedRectangle(cornerRadius: 28, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.34)
-            .padding(18)
         }
+        .background(WindowConfigurator())
         .preferredColorScheme(.dark)
         .frame(width: 1120, height: 760)
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers)
         }
         .overlay {
             if isDropTargeted {
-                RoundedRectangle(cornerRadius: 30, style: .continuous)
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .stroke(Color.accentColor.opacity(0.82), lineWidth: 2)
-                    .padding(20)
                     .allowsHitTesting(false)
             }
         }
