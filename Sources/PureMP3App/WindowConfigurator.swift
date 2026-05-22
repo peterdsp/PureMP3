@@ -26,6 +26,8 @@ struct WindowConfigurator: NSViewRepresentable {
         window.isMovableByWindowBackground = true
         window.backgroundColor = .clear
         window.isOpaque = false
+        window.ignoresMouseEvents = false
+        window.acceptsMouseMovedEvents = true
         window.styleMask.insert(.fullSizeContentView)
     }
 }

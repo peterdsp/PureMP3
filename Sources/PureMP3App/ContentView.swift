@@ -1,3 +1,4 @@
+import AppKit
 import PureMP3Core
 import SwiftUI
 import UniformTypeIdentifiers
@@ -29,6 +30,10 @@ struct ContentView: View {
             }
             .frame(width: Layout.windowWidth, height: Layout.windowHeight)
             .liquidGlass(RoundedRectangle(cornerRadius: Layout.windowCornerRadius, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.34)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            NSApp.activate(ignoringOtherApps: true)
         }
         .ignoresSafeArea()
         .background(WindowConfigurator())

@@ -23,7 +23,7 @@ final class AppViewModel {
     }
 
     var selectedPreset: AudioQualityPreset = .vbrBalanced
-    var displayMode: DisplayMode = .oled
+    var displayMode: DisplayMode = .liquidGlass
     var jobs: [ConversionJob] = []
     var outputDirectory: URL = FileManager.default.urls(for: .musicDirectory, in: .userDomainMask).first
         ?? FileManager.default.homeDirectoryForCurrentUser

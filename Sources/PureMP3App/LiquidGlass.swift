@@ -46,9 +46,9 @@ struct LiquidGlassBackground: View {
             case .liquidGlass:
                 LinearGradient(
                     colors: [
-                        Color(red: 0.05, green: 0.07, blue: 0.10),
-                        Color(red: 0.03, green: 0.09, blue: 0.10),
-                        Color(red: 0.08, green: 0.06, blue: 0.12)
+                        Color(red: 0.02, green: 0.05, blue: 0.09),
+                        Color(red: 0.04, green: 0.08, blue: 0.11),
+                        Color(red: 0.02, green: 0.03, blue: 0.06)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -84,9 +84,9 @@ struct LiquidGlassSurface<S: Shape>: ViewModifier {
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    tint.opacity(mode == .oled ? 0.10 : 0.22),
-                                    Color.white.opacity(mode == .oled ? 0.018 : 0.05),
-                                    Color.black.opacity(mode == .oled ? 0.72 : 0.08)
+                                    tint.opacity(mode == .oled ? 0.10 : 0.18),
+                                    Color.white.opacity(mode == .oled ? 0.018 : 0.16),
+                                    Color.black.opacity(mode == .oled ? 0.72 : 0.18)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -97,9 +97,9 @@ struct LiquidGlassSurface<S: Shape>: ViewModifier {
                         .stroke(
                             LinearGradient(
                                 colors: [
-                                    .white.opacity(mode == .oled ? strokeOpacity * 0.44 : strokeOpacity),
-                                    .white.opacity(mode == .oled ? 0.035 : 0.08),
-                                    tint.opacity(mode == .oled ? strokeOpacity * 0.72 : strokeOpacity * 0.55)
+                                    .white.opacity(mode == .oled ? strokeOpacity * 0.44 : max(strokeOpacity, 0.42)),
+                                    .white.opacity(mode == .oled ? 0.035 : 0.16),
+                                    tint.opacity(mode == .oled ? strokeOpacity * 0.72 : max(strokeOpacity * 0.70, 0.24))
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
