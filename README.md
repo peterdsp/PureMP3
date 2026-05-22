@@ -1,14 +1,40 @@
-# PureMP3
+<p align="center">
+  <img src="Assets/puremp3-app-preview.png" alt="PureMP3 app preview" width="100%">
+</p>
 
-PureMP3 is a minimal macOS app for honest MP3 conversion.
+<h1 align="center">PureMP3</h1>
+
+<p align="center">
+  A minimal macOS app for honest, high-quality MP3 conversion.
+</p>
+
+<p align="center">
+  <a href="https://github.com/peterdsp/PureMP3/actions"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/peterdsp/PureMP3/ci.yml?branch=main"></a>
+  <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%2014+-black">
+  <img alt="Swift" src="https://img.shields.io/badge/swift-5.10-orange">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
+</p>
+
+PureMP3 is a small macOS app for converting video and audio files to MP3 without pretending that lossy audio has magic compression rules.
 
 It exists because converting a video to a clean MP3 should not require remembering FFmpeg flags, opening a heavyweight encoder, or pretending that a 320 kbps MP3 can be magically compressed while staying truly 320 kbps.
 
 Drop files in. Pick a quality preset. Convert.
 
-![Platform](https://img.shields.io/badge/platform-macOS%2014+-black)
-![Swift](https://img.shields.io/badge/swift-5.10-orange)
-![License](https://img.shields.io/badge/license-MIT-green)
+## Demo
+
+<p align="center">
+  <img src="Assets/puremp3-demo.gif" alt="PureMP3 animated demo" width="100%">
+</p>
+
+## Highlights
+
+- Drop audio or video files into a focused conversion queue
+- Pick real LAME presets without digging through FFmpeg docs
+- Use VBR Best, VBR Balanced, 320 kbps, 256 kbps, or 192 kbps
+- See the exact command PureMP3 will run
+- Get warned before re-encoding an already lossy MP3
+- Keep the conversion policy in a tested Swift core module
 
 ## Why
 
@@ -36,7 +62,16 @@ PureMP3 makes those tradeoffs explicit.
 - Keeps the interface intentionally small
 - Uses a testable Swift core instead of hiding behavior inside the UI
 
-## Presets
+## Interface
+
+PureMP3 is designed to stay out of the way:
+
+- the queue is the product, not a settings maze
+- quality choices are visible before conversion starts
+- warnings are attached to the file they affect
+- the FFmpeg command is visible instead of hidden behind a black box
+
+## Quality Presets
 
 | Preset | FFmpeg settings | Use when |
 | --- | --- | --- |
@@ -117,6 +152,7 @@ The rule is simple: conversion policy belongs in `PureMP3Core`. The app can chan
 
 ## Roadmap
 
+- Real captured screenshots for each release
 - Progress parsing from FFmpeg stderr
 - Drag-to-reorder queue
 - Conversion cancellation

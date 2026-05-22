@@ -13,32 +13,34 @@ struct ContentView: View {
             HStack(spacing: 0) {
                 sidebar
                 Divider()
-                queue
+                mainContent
             }
             Divider()
-            footer
+            commandBar
         }
-        .frame(width: 980, height: 640)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .frame(width: 940, height: 620)
+        .background(AppColor.window)
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers)
         }
         .overlay {
             if isDropTargeted {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.accentColor, lineWidth: 2)
-                    .padding(10)
+                    .padding(12)
                     .allowsHitTesting(false)
             }
         }
     }
 
     private var header: some View {
-        HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(alignment: .center, spacing: 14) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text("PureMP3")
-                    .font(.system(size: 22, weight: .semibold, design: .rounded))
-                Text("Honest MP3 conversion for people tired of terminal commands.")
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(.primary)
+
+                Text("A small, honest MP3 converter powered by FFmpeg.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -50,17 +52,20 @@ struct ContentView: View {
             } label: {
                 Label("Add files", systemImage: "plus")
             }
-            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
 
             Button {
                 viewModel.convertAll()
             } label: {
-                Label(viewModel.isConverting ? "Converting" : "Convert", systemImage: "waveform")
+                Label("Convert", systemImage: "waveform")
             }
+            .controlSize(.large)
+            .buttonStyle(.borderedProminent)
             .disabled(!viewModel.hasJobs || viewModel.isConverting)
             .keyboardShortcut(.return, modifiers: .command)
         }
-        .padding(20)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 18)
     }
 
     private var sidebar: some View {
@@ -86,35 +91,43 @@ struct ContentView: View {
                 Button {
                     viewModel.chooseOutputDirectory()
                 } label: {
-                    HStack {
+                    HStack(spacing: 9) {
                         Image(systemName: "folder")
+                            .frame(width: 18)
                         Text(viewModel.outputDirectory.lastPathComponent)
                             .lineLimit(1)
                         Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.tertiary)
                     }
+                    .font(.callout.weight(.medium))
+                    .padding(.horizontal, 12)
+                    .frame(height: 42)
+                    .background(AppColor.control, in: RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
-                .padding(10)
-                .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
             }
-
-            Divider()
 
             VStack(alignment: .leading, spacing: 8) {
                 SectionTitle("Truth")
+
                 Text(TruthCopy.bitrateTruth)
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            .padding(.top, 2)
 
             Spacer()
         }
-        .padding(18)
-        .frame(width: 300)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 20)
+        .frame(width: 278)
+        .background(AppColor.sidebar)
     }
 
-    private var queue: some View {
+    private var mainContent: some View {
         VStack(spacing: 0) {
             if viewModel.jobs.isEmpty {
                 emptyState
@@ -128,40 +141,68 @@ struct ContentView: View {
                     .onDelete(perform: viewModel.removeJobs)
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AppColor.content)
     }
 
     private var emptyState: some View {
-        VStack(spacing: 14) {
-            Image(systemName: "arrow.down.doc")
-                .font(.system(size: 42, weight: .regular))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 20) {
+            Spacer(minLength: 34)
 
-            Text("Drop audio or video files")
-                .font(.title3.weight(.semibold))
+            VStack(spacing: 18) {
+                Image(systemName: "arrow.down.doc")
+                    .font(.system(size: 40, weight: .regular))
+                    .foregroundStyle(.secondary)
 
-            Text("MP4, M4A, WAV, FLAC, and existing MP3 files are accepted.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+                VStack(spacing: 6) {
+                    Text("Drop files to convert")
+                        .font(.system(size: 22, weight: .semibold))
 
-            Button {
-                viewModel.chooseFiles()
-            } label: {
-                Label("Choose files", systemImage: "plus")
+                    Text("MP4, M4A, WAV, FLAC, and MP3 are supported.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+
+                Button {
+                    viewModel.chooseFiles()
+                } label: {
+                    Label("Choose files", systemImage: "plus")
+                }
+                .controlSize(.large)
+                .buttonStyle(.borderedProminent)
             }
-            .buttonStyle(.bordered)
+            .frame(width: 430, height: 260)
+            .background(AppColor.dropZone, in: RoundedRectangle(cornerRadius: 12))
+            .overlay {
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(AppColor.dropStroke, style: StrokeStyle(lineWidth: 1, dash: [6, 6]))
+            }
+
+            HStack(spacing: 10) {
+                InfoPill(icon: "waveform", title: "VBR first", value: "smaller, still excellent")
+                InfoPill(icon: "checkmark.seal", title: "No myths", value: "honest bitrate rules")
+                InfoPill(icon: "terminal", title: "Visible", value: "shows the command")
+            }
+            .frame(width: 600)
+
+            Spacer(minLength: 38)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var footer: some View {
+    private var commandBar: some View {
         HStack(spacing: 12) {
+            Image(systemName: "terminal")
+                .foregroundStyle(.secondary)
+
             Text(viewModel.commandPreview)
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
+                .truncationMode(.middle)
 
             Spacer()
 
@@ -177,7 +218,8 @@ struct ContentView: View {
             .disabled(viewModel.jobs.isEmpty)
         }
         .padding(.horizontal, 18)
-        .padding(.vertical, 12)
+        .frame(height: 46)
+        .background(AppColor.footer)
     }
 
     private func handleDrop(_ providers: [NSItemProvider]) -> Bool {
@@ -209,6 +251,16 @@ struct ContentView: View {
     }
 }
 
+private enum AppColor {
+    static let window = Color(nsColor: .windowBackgroundColor)
+    static let sidebar = Color(nsColor: .underPageBackgroundColor)
+    static let content = Color(nsColor: .windowBackgroundColor)
+    static let footer = Color(nsColor: .controlBackgroundColor)
+    static let control = Color(nsColor: .controlBackgroundColor)
+    static let dropZone = Color(nsColor: .controlBackgroundColor).opacity(0.62)
+    static let dropStroke = Color.secondary.opacity(0.28)
+}
+
 private struct SectionTitle: View {
     let title: String
 
@@ -218,7 +270,7 @@ private struct SectionTitle: View {
 
     var body: some View {
         Text(title.uppercased())
-            .font(.caption.weight(.semibold))
+            .font(.system(size: 11, weight: .semibold))
             .foregroundStyle(.secondary)
     }
 }
@@ -232,25 +284,66 @@ private struct PresetRow: View {
         Button(action: action) {
             HStack(spacing: 10) {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
                     .frame(width: 18)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(preset.title)
-                        .font(.callout.weight(.medium))
+                        .font(.callout.weight(.semibold))
+                        .foregroundStyle(.primary)
+
                     Text(preset.subtitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                Spacer()
+                Spacer(minLength: 0)
             }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 9)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .padding(10)
-        .background(isSelected ? Color.accentColor.opacity(0.12) : Color.clear, in: RoundedRectangle(cornerRadius: 8))
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(isSelected ? Color.accentColor.opacity(0.10) : Color.clear)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(isSelected ? Color.accentColor.opacity(0.28) : Color.clear)
+        }
+    }
+}
+
+private struct InfoPill: View {
+    let icon: String
+    let title: String
+    let value: String
+
+    var body: some View {
+        HStack(spacing: 9) {
+            Image(systemName: icon)
+                .font(.callout.weight(.medium))
+                .foregroundStyle(Color.accentColor)
+                .frame(width: 18)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                Text(value)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 10)
+        .frame(height: 48)
+        .background(AppColor.control, in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
