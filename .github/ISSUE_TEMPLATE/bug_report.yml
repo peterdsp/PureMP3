@@ -1,0 +1,28 @@
+name: Bug report
+description: Report a problem with PureMP3
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: Media details
+      description: File type, source codec, duration, and preset if known.
+  - type: textarea
+    id: logs
+    attributes:
+      label: FFmpeg output
+      render: text

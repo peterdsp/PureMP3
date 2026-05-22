@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest an improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What do you want PureMP3 to do?
+    validations:
+      required: true
+  - type: textarea
+    id: tradeoff
+    attributes:
+      label: Audio tradeoff
+      description: Does this change quality, size, format, metadata, or conversion speed?
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
