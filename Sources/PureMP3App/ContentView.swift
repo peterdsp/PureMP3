@@ -13,19 +13,19 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 header
 
-                HStack(spacing: 14) {
+                HStack(spacing: 16) {
                     sidebar
                     mainContent
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 20)
 
                 commandBar
             }
             .liquidGlass(RoundedRectangle(cornerRadius: 28, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.34)
-            .padding(16)
+            .padding(18)
         }
         .preferredColorScheme(.dark)
-        .frame(width: 940, height: 620)
+        .frame(width: 1120, height: 760)
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers)
         }
@@ -45,44 +45,53 @@ struct ContentView: View {
                 Text("PureMP3")
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
 
                 Text("A small, honest MP3 converter powered by FFmpeg.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
+            .layoutPriority(1)
 
             Spacer()
 
-            Picker("Display mode", selection: $viewModel.displayMode) {
-                ForEach(AppViewModel.DisplayMode.allCases) { mode in
-                    Text(mode.title)
-                        .tag(mode)
+            HStack(spacing: 12) {
+                Picker("Display mode", selection: $viewModel.displayMode) {
+                    ForEach(AppViewModel.DisplayMode.allCases) { mode in
+                        Text(mode.title)
+                            .tag(mode)
+                    }
                 }
-            }
-            .pickerStyle(.segmented)
-            .frame(width: 132)
-            .liquidGlass(Capsule(), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.18, shadowOpacity: 0.08, interactive: true)
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(width: 168, height: 38)
+                .fixedSize()
+                .liquidGlass(Capsule(), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.18, shadowOpacity: 0.08, interactive: true)
 
-            Button {
-                viewModel.chooseFiles()
-            } label: {
-                Label("Add files", systemImage: "plus")
-            }
-            .buttonStyle(LiquidGlassButtonStyle(mode: viewModel.displayMode))
+                Button {
+                    viewModel.chooseFiles()
+                } label: {
+                    Label("Add files", systemImage: "plus")
+                }
+                .buttonStyle(LiquidGlassButtonStyle(mode: viewModel.displayMode))
 
-            Button {
-                viewModel.convertAll()
-            } label: {
-                Label("Convert", systemImage: "waveform")
+                Button {
+                    viewModel.convertAll()
+                } label: {
+                    Label("Convert", systemImage: "waveform")
+                }
+                .buttonStyle(LiquidGlassButtonStyle(prominent: true, mode: viewModel.displayMode))
+                .disabled(!viewModel.hasJobs || viewModel.isConverting)
+                .keyboardShortcut(.return, modifiers: .command)
             }
-            .buttonStyle(LiquidGlassButtonStyle(prominent: true, mode: viewModel.displayMode))
-            .disabled(!viewModel.hasJobs || viewModel.isConverting)
-            .keyboardShortcut(.return, modifiers: .command)
+            .fixedSize()
         }
-        .padding(.trailing, 28)
-        .padding(.leading, 112)
-        .padding(.top, 22)
-        .padding(.bottom, 18)
+        .padding(.trailing, 30)
+        .padding(.leading, 132)
+        .padding(.top, 42)
+        .padding(.bottom, 22)
+        .frame(height: 124)
     }
 
     private var sidebar: some View {
@@ -139,7 +148,7 @@ struct ContentView: View {
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 18)
-        .frame(width: 278)
+        .frame(width: 320)
         .liquidGlass(RoundedRectangle(cornerRadius: 22, style: .continuous), tint: Color(red: 0.38, green: 0.70, blue: 1.0), mode: viewModel.displayMode, strokeOpacity: 0.26, shadowOpacity: 0.14)
     }
 
@@ -190,7 +199,7 @@ struct ContentView: View {
                 .controlSize(.large)
                 .buttonStyle(LiquidGlassButtonStyle(prominent: true, mode: viewModel.displayMode))
             }
-            .frame(width: 430, height: 260)
+            .frame(width: 500, height: 280)
             .liquidGlass(RoundedRectangle(cornerRadius: 24, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.36, shadowOpacity: 0.24, interactive: true)
             .overlay {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
@@ -202,7 +211,7 @@ struct ContentView: View {
                 InfoPill(icon: "checkmark.seal", title: "No myths", value: "honest bitrate rules", mode: viewModel.displayMode)
                 InfoPill(icon: "terminal", title: "Visible", value: "shows the command", mode: viewModel.displayMode)
             }
-            .frame(width: 600)
+            .frame(width: 720)
 
             Spacer(minLength: 38)
         }

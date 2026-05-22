@@ -7,7 +7,7 @@ struct PureMP3App: App {
             ContentView(viewModel: AppViewModel())
         }
         .windowStyle(.hiddenTitleBar)
-        .defaultSize(width: 940, height: 620)
+        .defaultSize(width: 1120, height: 760)
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .newItem) {}
