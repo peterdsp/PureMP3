@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Assets/puremp3-app-preview.png" alt="PureMP3 app preview" width="100%">
+  <img src="Assets/puremp3-liquid-glass-window.png" alt="PureMP3 Liquid Glass app preview" width="100%">
 </p>
 
 <h1 align="center">PureMP3</h1>
@@ -26,6 +26,8 @@ Drop files in. Pick a quality preset. Convert.
 <p align="center">
   <img src="Assets/puremp3-demo.gif" alt="PureMP3 animated demo" width="100%">
 </p>
+
+The Liquid Glass direction is inspired by Lucas Romero's CSS/SVG experiment, [liquid-glass-effect-macos](https://github.com/lucasromerodb/liquid-glass-effect-macos), translated here into native SwiftUI surfaces that still build on the current macOS 14 toolchain.
 
 ## Highlights
 
@@ -70,6 +72,7 @@ PureMP3 is designed to stay out of the way:
 - quality choices are visible before conversion starts
 - warnings are attached to the file they affect
 - the FFmpeg command is visible instead of hidden behind a black box
+- glass is used for hierarchy, depth, and interaction rather than decoration alone
 
 ## Quality Presets
 

@@ -7,27 +7,32 @@ struct ContentView: View {
     @State private var isDropTargeted = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            HStack(spacing: 0) {
-                sidebar
-                Divider()
-                mainContent
+        ZStack {
+            LiquidGlassBackground()
+
+            VStack(spacing: 0) {
+                header
+
+                HStack(spacing: 14) {
+                    sidebar
+                    mainContent
+                }
+                .padding(.horizontal, 16)
+
+                commandBar
             }
-            Divider()
-            commandBar
+            .liquidGlass(RoundedRectangle(cornerRadius: 28, style: .continuous), tint: Color.accentColor, strokeOpacity: 0.34)
+            .padding(16)
         }
         .frame(width: 940, height: 620)
-        .background(AppColor.window)
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers)
         }
         .overlay {
             if isDropTargeted {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.accentColor, lineWidth: 2)
-                    .padding(12)
+                RoundedRectangle(cornerRadius: 30, style: .continuous)
+                    .stroke(Color.accentColor.opacity(0.82), lineWidth: 2)
+                    .padding(20)
                     .allowsHitTesting(false)
             }
         }
@@ -52,20 +57,21 @@ struct ContentView: View {
             } label: {
                 Label("Add files", systemImage: "plus")
             }
-            .controlSize(.large)
+            .buttonStyle(LiquidGlassButtonStyle())
 
             Button {
                 viewModel.convertAll()
             } label: {
                 Label("Convert", systemImage: "waveform")
             }
-            .controlSize(.large)
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(LiquidGlassButtonStyle(prominent: true))
             .disabled(!viewModel.hasJobs || viewModel.isConverting)
             .keyboardShortcut(.return, modifiers: .command)
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 18)
+        .padding(.trailing, 28)
+        .padding(.leading, 112)
+        .padding(.top, 22)
+        .padding(.bottom, 18)
     }
 
     private var sidebar: some View {
@@ -82,8 +88,6 @@ struct ContentView: View {
                     }
                 }
             }
-
-            Divider()
 
             VStack(alignment: .leading, spacing: 10) {
                 SectionTitle("Output")
@@ -104,7 +108,7 @@ struct ContentView: View {
                     .font(.callout.weight(.medium))
                     .padding(.horizontal, 12)
                     .frame(height: 42)
-                    .background(AppColor.control, in: RoundedRectangle(cornerRadius: 8))
+                    .liquidGlass(RoundedRectangle(cornerRadius: 12, style: .continuous), tint: Color.accentColor, strokeOpacity: 0.22, shadowOpacity: 0.10, interactive: true)
                 }
                 .buttonStyle(.plain)
             }
@@ -122,9 +126,9 @@ struct ContentView: View {
             Spacer()
         }
         .padding(.horizontal, 18)
-        .padding(.vertical, 20)
+        .padding(.vertical, 18)
         .frame(width: 278)
-        .background(AppColor.sidebar)
+        .liquidGlass(RoundedRectangle(cornerRadius: 22, style: .continuous), tint: Color(red: 0.38, green: 0.70, blue: 1.0), strokeOpacity: 0.26, shadowOpacity: 0.14)
     }
 
     private var mainContent: some View {
@@ -145,7 +149,7 @@ struct ContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColor.content)
+        .liquidGlass(RoundedRectangle(cornerRadius: 22, style: .continuous), tint: Color(red: 0.00, green: 0.76, blue: 0.64), strokeOpacity: 0.24, shadowOpacity: 0.16)
     }
 
     private var emptyState: some View {
@@ -175,10 +179,10 @@ struct ContentView: View {
                 .buttonStyle(.borderedProminent)
             }
             .frame(width: 430, height: 260)
-            .background(AppColor.dropZone, in: RoundedRectangle(cornerRadius: 12))
+            .liquidGlass(RoundedRectangle(cornerRadius: 24, style: .continuous), tint: Color.accentColor, strokeOpacity: 0.36, shadowOpacity: 0.24, interactive: true)
             .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(AppColor.dropStroke, style: StrokeStyle(lineWidth: 1, dash: [6, 6]))
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.14), style: StrokeStyle(lineWidth: 1, dash: [6, 6]))
             }
 
             HStack(spacing: 10) {
@@ -217,9 +221,11 @@ struct ContentView: View {
             }
             .disabled(viewModel.jobs.isEmpty)
         }
-        .padding(.horizontal, 18)
+        .padding(.horizontal, 20)
         .frame(height: 46)
-        .background(AppColor.footer)
+        .liquidGlass(Capsule(), tint: Color.accentColor, strokeOpacity: 0.20, shadowOpacity: 0.12)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
     }
 
     private func handleDrop(_ providers: [NSItemProvider]) -> Bool {
@@ -249,16 +255,6 @@ struct ContentView: View {
 
         return didAccept
     }
-}
-
-private enum AppColor {
-    static let window = Color(nsColor: .windowBackgroundColor)
-    static let sidebar = Color(nsColor: .underPageBackgroundColor)
-    static let content = Color(nsColor: .windowBackgroundColor)
-    static let footer = Color(nsColor: .controlBackgroundColor)
-    static let control = Color(nsColor: .controlBackgroundColor)
-    static let dropZone = Color(nsColor: .controlBackgroundColor).opacity(0.62)
-    static let dropStroke = Color.secondary.opacity(0.28)
 }
 
 private struct SectionTitle: View {
@@ -307,14 +303,14 @@ private struct PresetRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(isSelected ? Color.accentColor.opacity(0.10) : Color.clear)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(isSelected ? Color.accentColor.opacity(0.28) : Color.clear)
-        }
+        .liquidGlass(
+            RoundedRectangle(cornerRadius: 12, style: .continuous),
+            tint: isSelected ? Color.accentColor : Color.white,
+            strokeOpacity: isSelected ? 0.34 : 0.12,
+            shadowOpacity: isSelected ? 0.12 : 0.04,
+            interactive: true
+        )
+        .opacity(isSelected ? 1.0 : 0.78)
     }
 }
 
@@ -343,7 +339,7 @@ private struct InfoPill: View {
         }
         .padding(.horizontal, 10)
         .frame(height: 48)
-        .background(AppColor.control, in: RoundedRectangle(cornerRadius: 8))
+        .liquidGlass(RoundedRectangle(cornerRadius: 14, style: .continuous), tint: Color.accentColor, strokeOpacity: 0.18, shadowOpacity: 0.08)
     }
 }
 
@@ -381,6 +377,8 @@ private struct JobRow: View {
             statusView
         }
         .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .liquidGlass(RoundedRectangle(cornerRadius: 16, style: .continuous), tint: Color.white, strokeOpacity: 0.18, shadowOpacity: 0.08, interactive: true)
     }
 
     private var detailText: String {
