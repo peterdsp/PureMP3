@@ -70,17 +70,7 @@ struct ContentView: View {
             Spacer()
 
             HStack(spacing: 12) {
-                Picker("Display mode", selection: $viewModel.displayMode) {
-                    ForEach(AppViewModel.DisplayMode.allCases) { mode in
-                        Text(mode.title)
-                            .tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(width: 168, height: 38)
-                .fixedSize()
-                .liquidGlass(Capsule(), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.18, shadowOpacity: 0.08, interactive: true)
+                DisplayModeToggle(selection: $viewModel.displayMode)
 
                 Button {
                     viewModel.chooseFiles()

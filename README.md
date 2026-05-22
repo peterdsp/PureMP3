@@ -38,6 +38,7 @@ The Liquid Glass direction is inspired by Lucas Romero's CSS/SVG experiment, [li
 - See the exact command PureMP3 will run
 - Get warned before re-encoding an already lossy MP3
 - Keep the conversion policy in a tested Swift core module
+- Ships with a custom generated macOS app icon
 
 ## Why
 

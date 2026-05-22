@@ -77,7 +77,7 @@ struct LiquidGlassSurface<S: Shape>: ViewModifier {
                             .fill(Color.black.opacity(0.86))
                     } else {
                         shape
-                            .fill(.ultraThinMaterial)
+                            .fill(Color.white.opacity(0.055))
                     }
 
                     shape
@@ -108,7 +108,11 @@ struct LiquidGlassSurface<S: Shape>: ViewModifier {
                         )
                 }
             }
-            .shadow(color: .black.opacity(mode == .oled ? shadowOpacity * 1.5 : shadowOpacity), radius: interactive ? 18 : 24, y: interactive ? 10 : 16)
+            .shadow(
+                color: .black.opacity(mode == .oled ? shadowOpacity * 1.5 : shadowOpacity * 0.65),
+                radius: interactive ? 12 : 16,
+                y: interactive ? 7 : 10
+            )
     }
 }
 
@@ -157,7 +161,7 @@ struct LiquidGlassButtonStyle: ButtonStyle {
                     .background {
                         if mode == .liquidGlass {
                             Capsule()
-                                .fill(.ultraThinMaterial)
+                                .fill(Color.white.opacity(0.10))
                         }
                     }
                     .overlay {

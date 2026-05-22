@@ -29,5 +29,8 @@ struct WindowConfigurator: NSViewRepresentable {
         window.ignoresMouseEvents = false
         window.acceptsMouseMovedEvents = true
         window.styleMask.insert(.fullSizeContentView)
+
+        window.contentView?.wantsLayer = true
+        window.contentView?.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.002).cgColor
     }
 }

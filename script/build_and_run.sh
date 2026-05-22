@@ -7,6 +7,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST_DIR="$ROOT_DIR/dist"
 APP_BUNDLE="$DIST_DIR/$APP_NAME.app"
 EXECUTABLE="$ROOT_DIR/.build/debug/$APP_NAME"
+ICON_FILE="$ROOT_DIR/Assets/PureMP3.icns"
 
 cd "$ROOT_DIR"
 
@@ -15,8 +16,12 @@ pkill -x "$APP_NAME" 2>/dev/null || true
 swift build
 
 rm -rf "$APP_BUNDLE"
-mkdir -p "$APP_BUNDLE/Contents/MacOS"
+mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
 cp "$EXECUTABLE" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
+
+if [[ -f "$ICON_FILE" ]]; then
+  cp "$ICON_FILE" "$APP_BUNDLE/Contents/Resources/PureMP3.icns"
+fi
 
 cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -31,6 +36,8 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
   <string>$BUNDLE_ID</string>
   <key>CFBundleName</key>
   <string>$APP_NAME</string>
+  <key>CFBundleIconFile</key>
+  <string>PureMP3</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
