@@ -3,6 +3,12 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ContentView: View {
+    private enum Layout {
+        static let windowWidth: CGFloat = 1120
+        static let windowHeight: CGFloat = 760
+        static let windowCornerRadius: CGFloat = 28
+    }
+
     @Bindable var viewModel: AppViewModel
     @State private var isDropTargeted = false
 
@@ -21,19 +27,20 @@ struct ContentView: View {
 
                 commandBar
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .liquidGlass(RoundedRectangle(cornerRadius: 28, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.34)
+            .frame(width: Layout.windowWidth, height: Layout.windowHeight)
+            .liquidGlass(RoundedRectangle(cornerRadius: Layout.windowCornerRadius, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.34)
         }
+        .ignoresSafeArea()
         .background(WindowConfigurator())
         .preferredColorScheme(.dark)
-        .frame(width: 1120, height: 760)
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .frame(width: Layout.windowWidth, height: Layout.windowHeight)
+        .clipShape(RoundedRectangle(cornerRadius: Layout.windowCornerRadius, style: .continuous))
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers)
         }
         .overlay {
             if isDropTargeted {
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                RoundedRectangle(cornerRadius: Layout.windowCornerRadius, style: .continuous)
                     .stroke(Color.accentColor.opacity(0.82), lineWidth: 2)
                     .allowsHitTesting(false)
             }
