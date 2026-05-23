@@ -139,7 +139,14 @@ swift run PureMP3
 To build a local `.app` bundle with the icon and bundled FFmpeg lookup:
 
 ```bash
+script/download_ffmpeg_macos_arm64.sh
 script/build_and_run.sh --verify
+```
+
+To create a local zipped app archive:
+
+```bash
+script/package_release.sh
 ```
 
 ## Test

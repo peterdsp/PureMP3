@@ -12,8 +12,25 @@ ARCH_NAME="macos-$(uname -m)"
 FFMPEG_RESOURCE_DIR="$APP_BUNDLE/Contents/Resources/FFmpeg/bin"
 FFMPEG_VENDOR_DIR="$ROOT_DIR/Vendor/FFmpeg/$ARCH_NAME/bin"
 FFMPEG_UNIVERSAL_VENDOR_DIR="$ROOT_DIR/Vendor/FFmpeg/macos-universal/bin"
+OPEN_APP=1
+VERIFY_APP=0
 
 cd "$ROOT_DIR"
+
+for argument in "$@"; do
+  case "$argument" in
+    --no-open)
+      OPEN_APP=0
+      ;;
+    --verify)
+      VERIFY_APP=1
+      ;;
+    *)
+      echo "Unknown argument: $argument"
+      exit 64
+      ;;
+  esac
+done
 
 pkill -x "$APP_NAME" 2>/dev/null || true
 
@@ -95,9 +112,16 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
-/usr/bin/open -n "$APP_BUNDLE"
+if [[ "$OPEN_APP" -eq 1 ]]; then
+  /usr/bin/open -n "$APP_BUNDLE"
+fi
 
-if [[ "${1:-}" == "--verify" ]]; then
+if [[ "$VERIFY_APP" -eq 1 && "$OPEN_APP" -eq 1 ]]; then
   sleep 2
   pgrep -x "$APP_NAME" >/dev/null
+fi
+
+if [[ "$VERIFY_APP" -eq 1 ]]; then
+  test -x "$FFMPEG_RESOURCE_DIR/ffmpeg"
+  test -x "$FFMPEG_RESOURCE_DIR/ffprobe"
 fi
