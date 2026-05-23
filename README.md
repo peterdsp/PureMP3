@@ -37,6 +37,7 @@ The Liquid Glass direction is inspired by Lucas Romero's CSS/SVG experiment, [li
 - Switch between full-window Glass and matte-black OLED display modes
 - See the exact command PureMP3 will run
 - Get warned before re-encoding an already lossy MP3
+- Bundle FFmpeg and ffprobe inside the app for plug and play releases
 - Keep the conversion policy in a tested Swift core module
 - Ships with a custom generated macOS app icon
 
@@ -106,19 +107,25 @@ This is usually the better choice:
 ffmpeg -i myfile.mp4 -vn -codec:a libmp3lame -q:a 2 myfile.mp3
 ```
 
-## Install FFmpeg
+## Plug And Play FFmpeg
 
-PureMP3 uses your local FFmpeg installation.
+PureMP3 is built to ship with FFmpeg and ffprobe inside the app bundle, so normal users do not need Homebrew, Terminal, or a separate FFmpeg install.
 
-```bash
-brew install ffmpeg
+Release app layout:
+
+```text
+PureMP3.app/Contents/Resources/FFmpeg/bin/ffmpeg
+PureMP3.app/Contents/Resources/FFmpeg/bin/ffprobe
 ```
 
-PureMP3 currently looks for FFmpeg in:
+Developer builds also support:
 
+- `PUREMP3_FFMPEG_DIR`
 - `/opt/homebrew/bin`
 - `/usr/local/bin`
 - `/usr/bin`
+
+For release packaging, see [Docs/DISTRIBUTION.md](Docs/DISTRIBUTION.md).
 
 ## Build
 
@@ -127,6 +134,12 @@ git clone https://github.com/peterdsp/PureMP3.git
 cd PureMP3
 swift build
 swift run PureMP3
+```
+
+To build a local `.app` bundle with the icon and bundled FFmpeg lookup:
+
+```bash
+script/build_and_run.sh --verify
 ```
 
 ## Test
@@ -141,18 +154,18 @@ PureMP3 is split into two layers:
 
 ```text
 PureMP3
-├── Sources
-│   ├── PureMP3App
-│   │   ├── SwiftUI views
-│   │   ├── app state
-│   │   └── shell FFmpeg client
-│   └── PureMP3Core
-│       ├── presets
-│       ├── command building
-│       ├── ffprobe parsing
-│       └── size estimation
-└── Tests
-    └── PureMP3CoreTests
++-- Sources
+|   +-- PureMP3App
+|   |   +-- SwiftUI views
+|   |   +-- app state
+|   |   +-- shell FFmpeg client
+|   +-- PureMP3Core
+|       +-- presets
+|       +-- command building
+|       +-- ffprobe parsing
+|       +-- size estimation
++-- Tests
+    +-- PureMP3CoreTests
 ```
 
 The rule is simple: conversion policy belongs in `PureMP3Core`. The app can change shape, but the audio behavior stays tested.
@@ -168,7 +181,7 @@ The rule is simple: conversion policy belongs in `PureMP3Core`. The app can chan
 - Homebrew cask
 - Signed releases
 - Localized interface
-- Optional bundled FFmpeg build with clear license handling
+- Release pipeline for signed app bundles with bundled FFmpeg
 
 ## Contributing
 
@@ -193,4 +206,4 @@ Avoid:
 
 PureMP3 is MIT licensed.
 
-FFmpeg is not bundled in this repository. If that changes, release packaging must respect FFmpeg and codec licensing.
+Bundled FFmpeg binaries keep their own license. FFmpeg licensing depends on the build configuration, so releases must include the correct FFmpeg notices, source links, and LGPL or GPL obligations.

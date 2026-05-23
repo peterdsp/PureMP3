@@ -9,3 +9,6 @@ xcuserdata/
 *.xcworkspace
 *.moved-aside
 Package.resolved
+Vendor/FFmpeg/**/bin/ffmpeg
+Vendor/FFmpeg/**/bin/ffprobe
+Vendor/FFmpeg/**/lib/
