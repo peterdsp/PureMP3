@@ -5,6 +5,26 @@ import Testing
 @Suite
 struct FFmpegCommandBuilderTests {
     @Test
+    func buildsLosslessUltraCommand() {
+        let builder = FFmpegCommandBuilder()
+        let arguments = builder.arguments(
+            inputURL: URL(fileURLWithPath: "/tmp/input.wav"),
+            outputURL: URL(fileURLWithPath: "/tmp/output.flac"),
+            preset: .losslessUltra,
+            overwrite: true
+        )
+
+        #expect(arguments == [
+            "-y",
+            "-i", "/tmp/input.wav",
+            "-vn",
+            "-codec:a", "flac",
+            "-compression_level", "12",
+            "/tmp/output.flac"
+        ])
+    }
+
+    @Test
     func buildsVBRBestCommand() {
         let builder = FFmpegCommandBuilder()
         let arguments = builder.arguments(

@@ -22,7 +22,11 @@ final class AppViewModel {
         }
     }
 
-    var selectedPreset: AudioQualityPreset = .vbrBalanced
+    var selectedPreset: AudioQualityPreset = .vbrBalanced {
+        didSet {
+            refreshOutputURLs()
+        }
+    }
     var displayMode: DisplayMode = .liquidGlass
     var jobs: [ConversionJob] = []
     var outputDirectory: URL = FileManager.default.urls(for: .musicDirectory, in: .userDomainMask).first
@@ -35,7 +39,8 @@ final class AppViewModel {
 
     var commandPreview: String {
         guard let firstJob = jobs.first else {
-            return "ffmpeg -i input.mp4 -vn -codec:a libmp3lame -q:a 2 output.mp3"
+            let sampleOutput = "output.\(selectedPreset.outputFileExtension)"
+            return "ffmpeg -i input.mp4 \(selectedPreset.ffmpegArguments.joined(separator: " ")) \(sampleOutput)"
         }
 
         return commandBuilder.shellPreview(
@@ -55,7 +60,7 @@ final class AppViewModel {
         let newJobs = supportedURLs.map { url in
             ConversionJob(
                 inputURL: url,
-                outputURL: outputURL(for: url)
+                outputURL: outputURL(for: url, preset: selectedPreset)
             )
         }
 
@@ -87,11 +92,7 @@ final class AppViewModel {
 
         if panel.runModal() == .OK, let url = panel.url {
             outputDirectory = url
-            jobs = jobs.map { job in
-                var updatedJob = job
-                updatedJob.outputURL = outputURL(for: job.inputURL)
-                return updatedJob
-            }
+            refreshOutputURLs()
         }
     }
 
@@ -143,10 +144,18 @@ final class AppViewModel {
         NSWorkspace.shared.activateFileViewerSelecting([job.outputURL])
     }
 
-    private func outputURL(for inputURL: URL) -> URL {
+    private func outputURL(for inputURL: URL, preset: AudioQualityPreset) -> URL {
         outputDirectory
             .appendingPathComponent(inputURL.deletingPathExtension().lastPathComponent)
-            .appendingPathExtension("mp3")
+            .appendingPathExtension(preset.outputFileExtension)
+    }
+
+    private func refreshOutputURLs() {
+        jobs = jobs.map { job in
+            var updatedJob = job
+            updatedJob.outputURL = outputURL(for: job.inputURL, preset: selectedPreset)
+            return updatedJob
+        }
     }
 
     private func loadMediaInfo(for jobIDs: [UUID]) async {

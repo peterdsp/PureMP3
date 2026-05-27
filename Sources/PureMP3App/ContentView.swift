@@ -60,7 +60,7 @@ struct ContentView: View {
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
-                Text("A small, honest MP3 converter powered by FFmpeg.")
+                Text("A small, honest audio converter powered by FFmpeg.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -210,7 +210,7 @@ struct ContentView: View {
             }
 
             HStack(spacing: 10) {
-                InfoPill(icon: "waveform", title: "VBR first", value: "smaller, still excellent", mode: viewModel.displayMode)
+                InfoPill(icon: "waveform", title: "FLAC or VBR", value: "lossless or compact", mode: viewModel.displayMode)
                 InfoPill(icon: "checkmark.seal", title: "No myths", value: "honest bitrate rules", mode: viewModel.displayMode)
                 InfoPill(icon: "terminal", title: "Visible", value: "shows the command", mode: viewModel.displayMode)
             }

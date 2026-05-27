@@ -1,6 +1,7 @@
 import Foundation
 
 public enum AudioQualityPreset: String, CaseIterable, Identifiable, Sendable {
+    case losslessUltra
     case vbrBest
     case vbrBalanced
     case cbr320
@@ -11,6 +12,8 @@ public enum AudioQualityPreset: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
+        case .losslessUltra:
+            "Lossless Ultra"
         case .vbrBest:
             "VBR Best"
         case .vbrBalanced:
@@ -26,6 +29,8 @@ public enum AudioQualityPreset: String, CaseIterable, Identifiable, Sendable {
 
     public var subtitle: String {
         switch self {
+        case .losslessUltra:
+            "FLAC output with maximum lossless compression. Larger, but no generational audio loss."
         case .vbrBest:
             "Highest quality LAME VBR, usually smaller than 320 kbps CBR."
         case .vbrBalanced:
@@ -41,6 +46,8 @@ public enum AudioQualityPreset: String, CaseIterable, Identifiable, Sendable {
 
     public var ffmpegArguments: [String] {
         switch self {
+        case .losslessUltra:
+            ["-vn", "-codec:a", "flac", "-compression_level", "12"]
         case .vbrBest:
             ["-vn", "-codec:a", "libmp3lame", "-q:a", "0"]
         case .vbrBalanced:
@@ -56,7 +63,7 @@ public enum AudioQualityPreset: String, CaseIterable, Identifiable, Sendable {
 
     public var fixedBitrateKilobitsPerSecond: Int? {
         switch self {
-        case .vbrBest, .vbrBalanced:
+        case .losslessUltra, .vbrBest, .vbrBalanced:
             nil
         case .cbr320:
             320
@@ -64,6 +71,15 @@ public enum AudioQualityPreset: String, CaseIterable, Identifiable, Sendable {
             256
         case .cbr192:
             192
+        }
+    }
+
+    public var outputFileExtension: String {
+        switch self {
+        case .losslessUltra:
+            "flac"
+        case .vbrBest, .vbrBalanced, .cbr320, .cbr256, .cbr192:
+            "mp3"
         }
     }
 }

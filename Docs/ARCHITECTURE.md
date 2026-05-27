@@ -1,6 +1,6 @@
 # Architecture
 
-PureMP3 has one product goal: make high-quality MP3 conversion understandable.
+PureMP3 has one product goal: make high-quality audio conversion understandable.
 
 ## Layers
 

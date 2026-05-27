@@ -5,7 +5,7 @@
 <h1 align="center">PureMP3</h1>
 
 <p align="center">
-  A small macOS app for honest, high-quality MP3 conversion.
+  A small macOS app for honest, high-quality audio conversion.
 </p>
 
 <p align="center">
@@ -15,9 +15,9 @@
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
-PureMP3 converts video and audio files to MP3 without hiding the tradeoffs behind vague compression claims.
+PureMP3 converts video and audio files to MP3 or lossless FLAC without hiding the tradeoffs behind vague compression claims.
 
-Drop files into the queue, choose a real LAME quality preset, pick an output folder, then convert. The app shows the FFmpeg command it will run and warns when a source is already a lossy MP3.
+Drop files into the queue, choose a real quality preset, pick an output folder, then convert. The app shows the FFmpeg command it will run and warns when a source is already a lossy MP3.
 
 ## Current Design
 
@@ -35,8 +35,8 @@ The interface is intentionally narrow in scope. Quality, output, queue state, an
 ## Highlights
 
 - Drag audio or video files into the app, or add them with the file picker
-- Convert MP4, M4A, WAV, FLAC, and MP3 inputs to MP3
-- Use LAME presets for VBR Best, VBR Balanced, 320 kbps, 256 kbps, and 192 kbps
+- Convert MP4, M4A, WAV, FLAC, and MP3 inputs to MP3 or lossless FLAC
+- Use FLAC Lossless Ultra or LAME presets for VBR Best, VBR Balanced, 320 kbps, 256 kbps, and 192 kbps
 - Switch between translucent Glass surfaces and a darker OLED mode
 - Preview the FFmpeg command before conversion
 - Warn before re-encoding an already lossy MP3
@@ -66,6 +66,7 @@ PureMP3 makes those tradeoffs explicit.
 
 | Preset | FFmpeg settings | Use when |
 | --- | --- | --- |
+| Lossless Ultra | `-vn -codec:a flac -compression_level 12` | You want lossless FLAC output and accept larger files |
 | VBR Best | `-vn -codec:a libmp3lame -q:a 0` | You want the highest LAME VBR quality, usually smaller than fixed 320 kbps |
 | VBR Balanced | `-vn -codec:a libmp3lame -q:a 2` | You want the best practical default |
 | 320 kbps | `-vn -codec:a libmp3lame -b:a 320k` | You need the maximum fixed MP3 bitrate |
