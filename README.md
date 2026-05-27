@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="Assets/puremp3-liquid-glass-window.png" alt="PureMP3 Liquid Glass app preview" width="100%">
+  <img src="Assets/app-icon.png" alt="PureMP3 app icon" width="140">
 </p>
 
 <h1 align="center">PureMP3</h1>
 
 <p align="center">
-  A minimal macOS app for honest, high-quality MP3 conversion.
+  A small macOS app for honest, high-quality MP3 conversion.
 </p>
 
 <p align="center">
@@ -15,31 +15,35 @@
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
-PureMP3 is a small macOS app for converting video and audio files to MP3 without pretending that lossy audio has magic compression rules.
+PureMP3 converts video and audio files to MP3 without hiding the tradeoffs behind vague compression claims.
 
-It exists because converting a video to a clean MP3 should not require remembering FFmpeg flags, opening a heavyweight encoder, or pretending that a 320 kbps MP3 can be magically compressed while staying truly 320 kbps.
+Drop files into the queue, choose a real LAME quality preset, pick an output folder, then convert. The app shows the FFmpeg command it will run and warns when a source is already a lossy MP3.
 
-Drop files in. Pick a quality preset. Convert.
+## Current Design
 
-## Demo
+PureMP3 is now a compact, fixed-size macOS window built around the conversion queue.
 
-<p align="center">
-  <img src="Assets/puremp3-demo.gif" alt="PureMP3 animated demo" width="100%">
-</p>
+- The header keeps the product title, display mode switcher, Add files, and Convert actions visible.
+- The left sidebar contains quality presets, output folder selection, and the bitrate truth note.
+- The main panel is either a drop target empty state or the active conversion queue.
+- Queue rows show input names, output names, duration when available, lossy MP3 warnings, and conversion status.
+- The bottom command bar previews the exact FFmpeg command for the first queued file.
+- The window supports two display modes: Glass and OLED.
 
-The Liquid Glass direction is inspired by Lucas Romero's CSS/SVG experiment, [liquid-glass-effect-macos](https://github.com/lucasromerodb/liquid-glass-effect-macos), translated here into native SwiftUI surfaces that still build on the current macOS 14 toolchain.
+The interface is intentionally narrow in scope. Quality, output, queue state, and command visibility stay on one screen.
 
 ## Highlights
 
-- Drop audio or video files into a focused conversion queue
-- Pick real LAME presets without digging through FFmpeg docs
-- Use VBR Best, VBR Balanced, 320 kbps, 256 kbps, or 192 kbps
-- Switch between full-window Glass and matte-black OLED display modes
-- See the exact command PureMP3 will run
-- Get warned before re-encoding an already lossy MP3
-- Bundle FFmpeg and ffprobe inside the app for plug and play releases
-- Keep the conversion policy in a tested Swift core module
-- Ships with a custom generated macOS app icon
+- Drag audio or video files into the app, or add them with the file picker
+- Convert MP4, M4A, WAV, FLAC, and MP3 inputs to MP3
+- Use LAME presets for VBR Best, VBR Balanced, 320 kbps, 256 kbps, and 192 kbps
+- Switch between translucent Glass surfaces and a darker OLED mode
+- Preview the FFmpeg command before conversion
+- Warn before re-encoding an already lossy MP3
+- Choose the output directory from the app
+- Reveal completed output files in Finder
+- Bundle FFmpeg and ffprobe inside release builds
+- Keep conversion policy in a tested Swift core module
 
 ## Why
 
@@ -58,36 +62,15 @@ If you keep real 320 kbps CBR MP3 quality, you cannot meaningfully shrink the fi
 
 PureMP3 makes those tradeoffs explicit.
 
-## What It Does
-
-- Converts video and audio files to MP3
-- Supports high-quality LAME presets
-- Shows the exact FFmpeg command
-- Warns when the source is already MP3
-- Keeps the interface intentionally small
-- Uses a testable Swift core instead of hiding behavior inside the UI
-
-## Interface
-
-PureMP3 is designed to stay out of the way:
-
-- the queue is the product, not a settings maze
-- quality choices are visible before conversion starts
-- warnings are attached to the file they affect
-- the FFmpeg command is visible instead of hidden behind a black box
-- glass is used for hierarchy, depth, and interaction rather than decoration alone
-- Glass mode uses full-window translucent surfaces with bright rim highlights
-- OLED mode uses a matte-black surface system with lower glow and sharper contrast
-
 ## Quality Presets
 
 | Preset | FFmpeg settings | Use when |
 | --- | --- | --- |
-| VBR Best | `-codec:a libmp3lame -q:a 0` | You want excellent quality and smaller files than fixed 320 kbps |
-| VBR Balanced | `-codec:a libmp3lame -q:a 2` | You want the best practical default |
-| 320 kbps | `-codec:a libmp3lame -b:a 320k` | You need maximum fixed MP3 bitrate |
-| 256 kbps | `-codec:a libmp3lame -b:a 256k` | You want very good music quality with smaller files |
-| 192 kbps | `-codec:a libmp3lame -b:a 192k` | You want a good general-purpose output size |
+| VBR Best | `-vn -codec:a libmp3lame -q:a 0` | You want the highest LAME VBR quality, usually smaller than fixed 320 kbps |
+| VBR Balanced | `-vn -codec:a libmp3lame -q:a 2` | You want the best practical default |
+| 320 kbps | `-vn -codec:a libmp3lame -b:a 320k` | You need the maximum fixed MP3 bitrate |
+| 256 kbps | `-vn -codec:a libmp3lame -b:a 256k` | You want very good music quality with smaller files |
+| 192 kbps | `-vn -codec:a libmp3lame -b:a 192k` | You want a good general-purpose output size |
 
 ## The Rule PureMP3 Will Not Break
 
@@ -107,7 +90,7 @@ This is usually the better choice:
 ffmpeg -i myfile.mp4 -vn -codec:a libmp3lame -q:a 2 myfile.mp3
 ```
 
-## Plug And Play FFmpeg
+## FFmpeg
 
 PureMP3 is built to ship with FFmpeg and ffprobe inside the app bundle, so normal users do not need Homebrew, Terminal, or a separate FFmpeg install.
 
@@ -177,16 +160,17 @@ PureMP3
 
 The rule is simple: conversion policy belongs in `PureMP3Core`. The app can change shape, but the audio behavior stays tested.
 
+For more detail, see [Docs/ARCHITECTURE.md](Docs/ARCHITECTURE.md).
+
 ## Roadmap
 
-- Real captured screenshots for each release
 - Progress parsing from FFmpeg stderr
 - Drag-to-reorder queue
 - Conversion cancellation
 - Metadata and album art preservation
 - Opus, AAC, FLAC, and WAV outputs
 - Homebrew cask
-- Signed releases
+- Signed and notarized releases
 - Localized interface
 - Release pipeline for signed app bundles with bundled FFmpeg
 
