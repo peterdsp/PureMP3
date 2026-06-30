@@ -28,17 +28,19 @@ struct ContentView: View {
 
                 commandBar
             }
-            .frame(width: Layout.windowWidth, height: Layout.windowHeight)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .liquidGlass(RoundedRectangle(cornerRadius: Layout.windowCornerRadius, style: .continuous), tint: Color.accentColor, mode: viewModel.displayMode, strokeOpacity: 0.34)
         }
         .contentShape(Rectangle())
         .onTapGesture {
             NSApp.activate(ignoringOtherApps: true)
         }
-        .ignoresSafeArea()
         .background(WindowConfigurator())
         .preferredColorScheme(.dark)
-        .frame(width: Layout.windowWidth, height: Layout.windowHeight)
+        // Fill the real window area instead of pinning an exact pixel height.
+        // The flexible middle section absorbs any difference so the header
+        // and command bar can never be clipped, whatever the drawable height.
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: Layout.windowCornerRadius, style: .continuous))
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers)
@@ -50,51 +52,65 @@ struct ContentView: View {
                     .allowsHitTesting(false)
             }
         }
+        // Apply at the outermost level so the fixed-size, clipped window
+        // fills the frame edge-to-edge instead of honoring the title bar
+        // safe-area inset (which clipped the header and command bar).
+        .ignoresSafeArea()
     }
 
     private var header: some View {
-        HStack(alignment: .center, spacing: 14) {
-            VStack(alignment: .leading, spacing: 3) {
+        VStack(spacing: 0) {
+            HStack(alignment: .center, spacing: 10) {
+                // Leading inset reserves space for the macOS window controls
+                // (the red/yellow/green "traffic lights") so the title sits
+                // beside them like a normal Mac title bar.
                 Text("PureMP3")
-                    .font(.system(size: 24, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
                 Text("A small, honest audio converter powered by FFmpeg.")
-                    .font(.subheadline)
+                    .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-            }
-            .layoutPriority(1)
+                    .layoutPriority(-1)
 
-            Spacer()
+                Spacer(minLength: 16)
 
-            HStack(spacing: 12) {
-                DisplayModeToggle(selection: $viewModel.displayMode)
+                HStack(spacing: 12) {
+                    DisplayModeToggle(selection: $viewModel.displayMode)
 
-                Button {
-                    viewModel.chooseFiles()
-                } label: {
-                    Label("Add files", systemImage: "plus")
+                    Button {
+                        viewModel.chooseFiles()
+                    } label: {
+                        Label("Add files", systemImage: "plus")
+                    }
+                    .buttonStyle(LiquidGlassButtonStyle(mode: viewModel.displayMode))
+
+                    Button {
+                        viewModel.convertAll()
+                    } label: {
+                        Label("Convert", systemImage: "waveform")
+                    }
+                    .buttonStyle(LiquidGlassButtonStyle(prominent: true, mode: viewModel.displayMode))
+                    .disabled(!viewModel.hasJobs || viewModel.isConverting)
+                    .keyboardShortcut(.return, modifiers: .command)
                 }
-                .buttonStyle(LiquidGlassButtonStyle(mode: viewModel.displayMode))
-
-                Button {
-                    viewModel.convertAll()
-                } label: {
-                    Label("Convert", systemImage: "waveform")
-                }
-                .buttonStyle(LiquidGlassButtonStyle(prominent: true, mode: viewModel.displayMode))
-                .disabled(!viewModel.hasJobs || viewModel.isConverting)
-                .keyboardShortcut(.return, modifiers: .command)
+                .fixedSize()
             }
-            .fixedSize()
+            .padding(.leading, 92)
+            .padding(.trailing, 20)
+            .frame(height: 56)
+            .background {
+                // A subtly distinct title-bar surface + hairline divider so the
+                // top of the window reads as real window chrome.
+                Rectangle()
+                    .fill(Color.white.opacity(viewModel.displayMode == .oled ? 0.02 : 0.05))
+            }
+
+            Divider()
+                .opacity(0.45)
         }
-        .padding(.trailing, 30)
-        .padding(.leading, 132)
-        .padding(.top, 42)
-        .padding(.bottom, 22)
-        .frame(height: 124)
     }
 
     private var sidebar: some View {
